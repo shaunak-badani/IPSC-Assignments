@@ -77,7 +77,6 @@ sp_mat sparse_mat_mul(sp_mat A, sp_mat B) {
 	int add_term;
 	for(int j = 1 ; j <= no_of_rows_B ; j++) {
 		for(int i = 0 ; i < A.list.size() ; i++) {
-			// cout << C.get_element(i, j) << " " <<  A.list[i].val << " " << B.get_element(A.list[i].col, j);
 			add_term = C.get_element(A.list[i].row, j) + A.list[i].val * B.get_element(A.list[i].col, j);
 			C.set_element(A.list[i].row, j, add_term);
 		}
@@ -85,23 +84,46 @@ sp_mat sparse_mat_mul(sp_mat A, sp_mat B) {
 	return C;
 }
 
+sp_mat make_coo(int dense_A[][1000], int m, int n) {
+	sp_mat A;
+	mat_el tmp;
+	for(int i = 1 ; i <= m ; i++) {
+		for(int j = 1; j <= n ; j++) {
+			if(dense_A[i][j]) {
+				tmp.row = i;
+				tmp.col = j;
+				tmp.val = dense_A[i][j];
+				A.list.push_back(tmp);
+			} 	
+		}
+	}
+	return A;
+}
+
 int main() {
 	int nz, row, col, val;
-	sp_mat A, B;
-	mat_el tmp;
-	cin >> nz;
-	for(int i = 0 ; i < nz ; i++) {
-		cin >> row >> col >> val;
-		A.set_element(row, col, val);
+	int dense_A[100][1000], dense_B[100][1000];
+	int m, n;
+	cin >> m >> n;
+	for(int i = 1 ; i <= m ; i++) {
+		for(int j = 1 ; j <= n ; j++) {
+			cin >> dense_A[i][j];
+		}
 	}
+	sp_mat A = make_coo(dense_A, m, n);
 
-	cin >> nz;
-	for(int i = 0 ; i < nz ; i++) {
-		cin >> row >> col >> val;
-		B.set_element(row, col, val);
+
+	cin >> m >> n;
+	for(int i = 1 ; i <= m ; i++) {
+		for(int j = 1 ; j <= n ; j++) {
+			cin >> dense_B[i][j];
+		}
 	}
+	sp_mat B = make_coo(dense_B, m, n);
+	cout << "Input Matrices : " << endl;
 	A.print();
 	B.print();
 	sp_mat C = sparse_mat_mul(A, B);
+	cout << "Output Matrix" << endl;
 	C.print();
 }
